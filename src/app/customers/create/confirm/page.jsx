@@ -1,8 +1,14 @@
 "use client";
-import OneCustomerInfoCard from "@/app/components/one_customer_info_card.jsx";
+import dynamic from "next/dynamic";
 import fetchCustomer from "./fetchCustomer";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
+// OneCustomerInfoCard をクライアント限定で読み込む
+const OneCustomerInfoCard = dynamic(
+  () => import("@/app/components/one_customer_info_card.jsx"),
+  { ssr: false }
+);
 
 export default function ConfirmPage() {
   const router = useRouter();
@@ -10,6 +16,7 @@ export default function ConfirmPage() {
   const [customer, setCustomer] = useState(null);
 
   useEffect(() => {
+    if (!customer_id) return; // ガード追加
     const fetchAndSetCustomer = async () => {
       const customerData = await fetchCustomer(customer_id);
       setCustomer(customerData);
